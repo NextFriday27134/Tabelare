@@ -41,12 +41,12 @@ def apartment_floor(value):
 def get_year(value, text):
     new_value = value
     if value in [np.nan]:
-        new_values = re.findall("[0-2][0-9][0-9][0-9]", text)
+        new_values = re.findall(r"\s[0-2][0-9][0-9][0-9]", text)
         if new_values == []:
             new_value = np.nan
         else:
             for val in new_values:
-                if int(val) < 1900:
+                if (int(val)) < 1900 or (int(val) > 2030):
                     continue
                 else:
                     new_value = val
@@ -122,7 +122,7 @@ def building_floors(value, text):
 
 def set_max_floor(current_floor, max_floor, mode_mansarda):
     new_max = max_floor
-    if (current_floor == 'mansardă') and (max_floor ==0):
+    if (current_floor == 'mansardă') and (max_floor == 0):
         new_max = mode_mansarda
     elif (current_floor == "parter") or (current_floor == "demisol") or (current_floor == 'mansardă'):
         pass
