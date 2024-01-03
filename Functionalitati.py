@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy as np
 import re
 
@@ -160,8 +159,45 @@ def city_zone(zone_value):
 
 
 def year_mode(zone_value, year_value, df):
-    if year_value == 0:
-        zone_mode = df[df['Zona Oras'] == zone_value]['Anul construcției'].mode().to_list()[0]
+    if year_value in [np.nan]:
+        zone_modes = df[df['Zona Oras'] == zone_value]['Anul construcției'].mode().to_list()
+        if len(zone_modes) > 0:
+            zone_mode = zone_modes[0]
+        else:
+            zone_mode = year_value
     else:
         zone_mode = year_value
     return zone_mode
+
+
+def heating_system(value, text):
+    new_value = value
+    forms = ['centralizata', "centralizată", "centrala pe gaz", 'centrala electrica',
+             "centrală pe gaz", "centrală electrică", "centrala", "centrală"]
+    if value == "nespecificat":
+        for form in forms:
+            new_values = re.findall(form, text)
+            if len(new_values) > 0:
+                new_value = new_values[0]
+                new_value = new_value.strip()
+                new_value = re.sub(r"a\b", "ă", new_value)
+                break
+    return new_value
+
+
+def round_years(year):
+    new_year = year
+    if new_year < 1970:
+        new_year = 1960
+    else:
+        new_year = int(new_year / 10) * 10
+    return new_year
+
+
+def zona_oras_2(value, dft):
+    new_value = value
+    real_number = dft[dft['Zona Oras'] == value]["count"].sum()
+    if real_number <= 50:
+        new_value = "Alte Zone"
+    return new_value
+
